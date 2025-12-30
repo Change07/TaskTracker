@@ -7,6 +7,13 @@ public class Task{
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public Task(){
+        this.id = 0;
+        this.description = null;
+        this.createdAt = null;
+        this.updatedAt = null;
+    }
+
     public Task(int id, String description, String status, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
         this.description = description;
@@ -24,13 +31,23 @@ public class Task{
 
     public LocalDateTime getUpdateTime(){ return this.updatedAt; }
 
-    public void setDescription(String newDescription){ 
+    public void setID(int id){ this.id = id; }
+
+    public void setCreateTime(String time){ this.createdAt = LocalDateTime.parse(time); }
+
+    public void setUpdateTime(String time){ this.updatedAt = LocalDateTime.parse(time); }
+
+    public void setDescription(String description){ this.description = description; }
+
+    public void setStatus(String status){ this.status = status;}
+
+    public void updateDescription(String newDescription){ 
         this.description = newDescription; 
         this.updatedAt = LocalDateTime.now();
     }
 
     @Override
     public String toString(){
-        return "ID: "+this.id+"\nDescription: "+this.description+"\nStatus: "+this.status+"CreatedAt: "+this.createdAt+"\nUpdatedAt"+this.updatedAt;
+        return "ID: "+this.id+"\nDescription: "+this.description+"\nStatus: "+this.status+"\nCreatedAt: "+this.createdAt+"\nUpdatedAt: "+this.updatedAt;
     }
 }
