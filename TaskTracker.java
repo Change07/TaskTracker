@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.nio.file.StandardOpenOption;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +29,7 @@ public class TaskTracker{
 
                     for (int i=0; i<tasksToLoad.length;i++){
                         tasksToLoad[i] = tasksToLoad[i].replaceAll("[{}]", "");
-                        // System.out.println("---> "+tasksToLoad[i]);
+                        //System.out.println("---> "+tasksToLoad[i]);
                     }
                     
                     switch (taskCategory){
@@ -37,8 +38,14 @@ public class TaskTracker{
                         case "done" -> { loadFileTODONE(tasksToLoad); }
                     }
                 }
-                // if (taskCategory != null ) System.out.println(taskCategory+" "+taskCategory.equals("todo"));
             }
+
+            Files.writeString(
+                TASK_FILE_PATH,
+                "",
+                StandardOpenOption.WRITE,
+                StandardOpenOption.DELETE_ON_CLOSE
+            );
 
         } catch(IOException e){
             e.printStackTrace();
@@ -53,7 +60,7 @@ public class TaskTracker{
             myTask = new Task();
             setValue(task, myTask);
             TO_DO.add(myTask);
-            myTask = null;
+            // System.out.println(TO_DO.get(0)+"\n");
         }
 
     }
@@ -66,7 +73,6 @@ public class TaskTracker{
             myTask = new Task();
             setValue(task, myTask);
             IN_PROGRESS.add(myTask);
-            myTask = null;
         }
     }
 
@@ -78,7 +84,6 @@ public class TaskTracker{
             myTask = new Task();
             setValue(task, myTask);
             DONE.add(myTask);
-            myTask = null;
         }
     }
 
@@ -108,18 +113,103 @@ public class TaskTracker{
     public static void main(String[] args){
         // Creates the file if it doesnt exits
         try{
-            Files.writeString(
-            TASK_FILE_PATH,
-            "",
-            StandardOpenOption.CREATE
-            );
+            Files.writeString(TASK_FILE_PATH, "", StandardOpenOption.CREATE);
 
             TaskTracker.loadFile();
-            System.out.println(TaskTracker.DONE.get(0).toString());
+            
+            //System.out.printf("1. %s\n2. %s\n3. %s\n", TaskTracker.TO_DO.get(0).toString(),TaskTracker.DONE.get(0).toString(), TaskTracker.IN_PROGRESS.get(0).toString());
         }catch(IOException e){
             System.out.println("Problem loading file... "+e.getMessage());
         }
+
+        TaskTracker.saveToFile();
     }
+
+    public static void saveToFile(){
+        try{
+            Files.writeString(TASK_FILE_PATH, "{\n", StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+
+            saveTodoTasks();
+            Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+            saveInProgressTasks();
+            Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+            saveDoneTasks();
+
+            Files.writeString(TASK_FILE_PATH, "\n}", StandardOpenOption.APPEND);
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+        
+    }
+
+    private static void saveTodoTasks(){
+        try{
+            Files.writeString(
+                TASK_FILE_PATH,
+                "\"todo\" : [",
+                StandardOpenOption.APPEND
+            );
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+
+        try(BufferedWriter writer = Files.newBufferedWriter(TASK_FILE_PATH, StandardOpenOption.APPEND)){
+            for (int i=0; i < TO_DO.size(); i++){
+                if (i==TO_DO.size()-1) {writer.write(TO_DO.get(i).toString()+"]");}
+                else{
+                    writer.write(TO_DO.get(i).toString()+", ");
+                }
+            }
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+    }
+
+    private static void saveDoneTasks(){
+        try{
+            Files.writeString(
+                TASK_FILE_PATH,
+                "\"done\" : [",
+                StandardOpenOption.APPEND
+            );
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+
+        try(BufferedWriter writer = Files.newBufferedWriter(TASK_FILE_PATH, StandardOpenOption.APPEND)){
+            for (int i=0; i < DONE.size(); i++){
+                if (i==DONE.size()-1) {writer.write(DONE.get(i).toString()+"]");}
+                else{
+                    writer.write(DONE.get(i).toString()+", ");
+                }
+            }
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+    }
+
+    private static void saveInProgressTasks(){
+        try{
+            Files.writeString(
+                TASK_FILE_PATH,
+                "\"in-progress\" : [",
+                StandardOpenOption.APPEND
+            );
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+
+        try(BufferedWriter writer = Files.newBufferedWriter(TASK_FILE_PATH, StandardOpenOption.APPEND)){
+            for (int i=0; i < IN_PROGRESS.size(); i++){
+                if (i==IN_PROGRESS.size()-1) {writer.write(IN_PROGRESS.get(i).toString()+"]");}
+                else{
+                    writer.write(IN_PROGRESS.get(i).toString()+", ");
+                }
+            }
+        }catch(IOException e){
+            System.out.println("Issue writing to file... "+e.getMessage());
+        }
+    }    
 }
 
 

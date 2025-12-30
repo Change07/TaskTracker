@@ -48,6 +48,6 @@ public class Task{
 
     @Override
     public String toString(){
-        return "ID: "+this.id+"\nDescription: "+this.description+"\nStatus: "+this.status+"\nCreatedAt: "+this.createdAt+"\nUpdatedAt: "+this.updatedAt;
+        return "{\"id\" : "+this.id+", \"description\" : \""+this.description+"\", \"status\" : \""+this.status+"\", \"createdAt\" : \""+this.createdAt+"\", \"updatedAt\" : \""+this.updatedAt+"\"}";
     }
 }

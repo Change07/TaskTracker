@@ -1,3 +1,5 @@
 {
-"done" : [{"id" : 1, "description" : "buy food", "status" : "done", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}, {"id" : 2, "description" : "go to gym", "status" : "done", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}]
+"todo" : [{"id" : 1, "description" : "buy food", "status" : "todo", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}, {"id" : 4, "description" : "eat food", "status" : "todo", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}],
+"in-progress" : [{"id" : 6, "description" : "wash dishes", "status" : "in-progress", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}, {"id" : 9, "description" : "clean table", "status" : "in-progress", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}],
+"done" : [{"id" : 7, "description" : "walk at night", "status" : "done", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}, {"id" : 9, "description" : "study", "status" : "done", "createdAt" : "2025-12-30T06:44:53.759008134", "updatedAt" : "2025-12-30T06:44:53.759008134"}]
 }
