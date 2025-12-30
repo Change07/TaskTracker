@@ -1,3 +1,5 @@
+package main;
+
 import java.util.ArrayList;
 import java.nio.file.StandardOpenOption;
 import java.io.BufferedReader;
@@ -6,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+
+import utils.Task;
+import utils.Utilities;
 
 public class TaskTracker{
     public static ArrayList<Task> TO_DO = new ArrayList<>();
@@ -41,11 +46,7 @@ public class TaskTracker{
             }
 
             Files.writeString(
-                TASK_FILE_PATH,
-                "",
-                StandardOpenOption.WRITE,
-                StandardOpenOption.DELETE_ON_CLOSE
-            );
+                TASK_FILE_PATH, "", StandardOpenOption.WRITE, StandardOpenOption.DELETE_ON_CLOSE);
 
         } catch(IOException e){
             e.printStackTrace();
@@ -53,20 +54,17 @@ public class TaskTracker{
     }
 
     private static void loadFileInTODO(String[] tasks){
-        System.out.println("---About to load Tasks---");
         Task myTask = null;
 
         for (String task : tasks){
             myTask = new Task();
             setValue(task, myTask);
             TO_DO.add(myTask);
-            // System.out.println(TO_DO.get(0)+"\n");
         }
 
     }
 
     private static void loadFileToINPROGRESS(String[] tasks){
-        System.out.println("---About to load Tasks---");
         Task myTask = null;
 
         for (String task : tasks){
@@ -77,7 +75,6 @@ public class TaskTracker{
     }
 
     private static void loadFileTODONE(String[] tasks){
-        System.out.println("---About to load Tasks---");
         Task myTask = null;
 
         for (String task : tasks){
@@ -89,6 +86,7 @@ public class TaskTracker{
 
     private static void setValue(String task, Task myTask){
         String[] taskAttributes; String[] taskTokens;
+        
         taskAttributes = task.split(",");
         for (String t : taskAttributes){
             taskTokens = t.replaceAll("\"", "").split(":");
@@ -129,11 +127,19 @@ public class TaskTracker{
         try{
             Files.writeString(TASK_FILE_PATH, "{\n", StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 
-            saveTodoTasks();
-            Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
-            saveInProgressTasks();
-            Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
-            saveDoneTasks();
+            if(!TO_DO.isEmpty()) {
+                saveTodoTasks();
+            }
+
+            if(!TO_DO.isEmpty()){
+                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+                saveInProgressTasks();
+            }
+
+            if(!TO_DO.isEmpty()){
+                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+                saveDoneTasks();
+            }
 
             Files.writeString(TASK_FILE_PATH, "\n}", StandardOpenOption.APPEND);
         }catch(IOException e){
