@@ -16,6 +16,8 @@ public class TaskTracker{
     public static ArrayList<Task> TO_DO = new ArrayList<>();
     public static ArrayList<Task> IN_PROGRESS = new ArrayList<>();
     public static ArrayList<Task> DONE = new ArrayList<>();
+    public static ArrayList<Integer> EXISTING_IDs = new ArrayList<>();
+
     public static Path TASK_FILE_PATH = Path.of("tasks.json");
 
     public static void loadFile(){
@@ -28,13 +30,10 @@ public class TaskTracker{
                 token = line.split("\\[");
                 if (token.length > 1){
                     taskCategory = token[0].split(":")[0].trim().replaceAll("\"", "");
-
-                    //System.out.println(token[1]);
                     tasksToLoad = token[1].replaceAll("\\]", "").trim().split("\\},\\s*\\{");
 
                     for (int i=0; i<tasksToLoad.length;i++){
                         tasksToLoad[i] = tasksToLoad[i].replaceAll("[{}]", "");
-                        //System.out.println("---> "+tasksToLoad[i]);
                     }
                     
                     switch (taskCategory){
@@ -91,6 +90,7 @@ public class TaskTracker{
         for (String t : taskAttributes){
             taskTokens = t.replaceAll("\"", "").split(":");
             if (taskTokens[0].trim().equals("id")){
+                EXISTING_IDs.add(Integer.valueOf(taskTokens[1].trim()));
                 myTask.setID(Integer.parseInt(taskTokens[1].trim()));
             }
             else if(taskTokens[0].trim().equals("description")){
@@ -114,12 +114,36 @@ public class TaskTracker{
             Files.writeString(TASK_FILE_PATH, "", StandardOpenOption.CREATE);
 
             TaskTracker.loadFile();
-            
-            //System.out.printf("1. %s\n2. %s\n3. %s\n", TaskTracker.TO_DO.get(0).toString(),TaskTracker.DONE.get(0).toString(), TaskTracker.IN_PROGRESS.get(0).toString());
+
         }catch(IOException e){
             System.out.println("Problem loading file... "+e.getMessage());
         }
 
+
+        // handling user input
+        String action = args[0];
+        if (action != null){
+            switch (action){
+                case "add" -> {Utilities.addTask(args[1].replaceAll("\"", ""), TO_DO, EXISTING_IDs);}
+                case "update" -> {Utilities.updateTask(Integer.parseInt(args[1]), args[2].replaceAll("\"", ""), TO_DO, IN_PROGRESS, DONE);}
+                case "delete" -> {Utilities.deleteTask(Integer.parseInt(args[1]), TO_DO, IN_PROGRESS, DONE);}
+                case "mark-in-progress" -> {Utilities.markInProgress(Integer.parseInt(args[1]), TO_DO, IN_PROGRESS, DONE);}
+                case "mark-done" -> {Utilities.markAsDone(Integer.parseInt(args[1]), TO_DO, IN_PROGRESS, DONE);}
+                case "list" -> {
+                    if (args.length < 2)
+                        Utilities.listAll(TO_DO, IN_PROGRESS, DONE);
+                    else{
+                        switch(args[1]){
+                            case "todo" -> {Utilities.listTodo(TO_DO);}
+                            case "in-progress" -> {Utilities.listInProgress(IN_PROGRESS);}
+                            case "done" -> {Utilities.listDone(DONE);}
+                        }
+                    }
+                }
+            }
+        }
+
+        // Save task to json file
         TaskTracker.saveToFile();
     }
 
@@ -127,17 +151,20 @@ public class TaskTracker{
         try{
             Files.writeString(TASK_FILE_PATH, "{\n", StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 
+            // save task with todo status
             if(!TO_DO.isEmpty()) {
                 saveTodoTasks();
+                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
             }
 
-            if(!TO_DO.isEmpty()){
-                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+            // save tasks with in-progress status
+            if(!IN_PROGRESS.isEmpty()){
                 saveInProgressTasks();
+                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
             }
 
-            if(!TO_DO.isEmpty()){
-                Files.writeString(TASK_FILE_PATH, ",\n", StandardOpenOption.APPEND);
+            // save tasks with done status
+            if(!DONE.isEmpty()){
                 saveDoneTasks();
             }
 
@@ -217,11 +244,3 @@ public class TaskTracker{
         }
     }    
 }
-
-
-// read json file and store task in three arrayLists
-    // check if the file exist first
-        // create a method to read from the json and store task obj to arraylist
-    // create a new json file if no json file exits
-
-// read user commands and perform action and perform action
