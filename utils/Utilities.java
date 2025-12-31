@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 public class Utilities{
-    static int RAND_SEED = 42;
 
     public static void addTask(String description, ArrayList<Task> TO_DO, ArrayList<Integer> EXISTING_IDs){
         Random rand = new Random(); int id = -1; boolean exist = true;
